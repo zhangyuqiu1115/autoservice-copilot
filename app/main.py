@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.api.routes.health import router as health_router
+from app.api.routes.vehicles import router as vehicles_router
 from app.core.config import get_settings
 
 
@@ -33,12 +34,18 @@ def create_app() -> FastAPI:
         prefix=settings.api_prefix,
     )
 
+    application.include_router(
+        vehicles_router,
+        prefix=settings.api_prefix,
+    )
+
     @application.get("/", tags=["root"])
     def root() -> dict[str, str]:
         return {
             "message": "AutoService Copilot API is running.",
             "documentation": "/docs",
             "health": f"{settings.api_prefix}/health",
+            "vehicles": f"{settings.api_prefix}/vehicles",
         }
 
     return application
