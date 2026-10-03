@@ -15,6 +15,7 @@ __pycache__/
 # Logs and generated data
 logs/
 data/private/
+data/uploads/
 
 # IDE settings
 .vscode/

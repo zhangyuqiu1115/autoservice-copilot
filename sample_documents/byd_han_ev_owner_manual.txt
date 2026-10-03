@@ -1,0 +1,11 @@
+AutoService Copilot Demo Knowledge Document
+
+Vehicle: BYD Han EV
+Document type: Owner manual sample
+Topic: Charging safety
+
+Before charging, park the vehicle safely and inspect the charging connector for visible damage.
+
+Stop charging and request professional inspection if abnormal heat, smoke, odor, or connector damage is detected.
+
+This file is synthetic demo data and is not an official BYD manual.

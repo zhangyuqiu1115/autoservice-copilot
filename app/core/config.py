@@ -10,8 +10,10 @@ class Settings(BaseSettings):
     debug: bool = True
     api_prefix: str = "/api/v1"
 
-    # SQLAlchemy 数据库连接地址
     database_url: str = "sqlite:///./autoservice.db"
+
+    upload_directory: str = "data/uploads"
+    max_upload_size_mb: int = 10
 
     model_config = SettingsConfigDict(
         env_file=".env",
