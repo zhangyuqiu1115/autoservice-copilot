@@ -81,3 +81,15 @@ class DocumentResponse(BaseModel):
     error_message: str | None
     created_at: datetime
     updated_at: datetime
+
+class DocumentChunkResponse(BaseModel):
+    """返回给 API 客户端的文档文本块。"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    document_id: int
+    chunk_index: int
+    content: str
+    character_count: int
+    created_at: datetime

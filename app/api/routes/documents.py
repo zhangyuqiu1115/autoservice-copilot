@@ -16,10 +16,16 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.enums import DocumentType
 from app.schemas.document import (
+    DocumentChunkResponse,
     DocumentResponse,
     DocumentUploadMetadata,
 )
-from app.services import document as document_service
+from app.services import (
+    document as document_service,
+)
+from app.services import (
+    document_processing as document_processing_service,
+)
 
 router = APIRouter(
     prefix="/documents",
@@ -135,6 +141,59 @@ def get_document(
         return document_service.get_document_by_id(
             db,
             document_id,
+        )
+    except document_service.DocumentNotFoundError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error
+
+
+@router.post(
+    "/{document_id}/process",
+    response_model=DocumentResponse,
+)
+def process_document(
+    document_id: Annotated[int, Path(gt=0)],
+    db: Annotated[Session, Depends(get_db)],
+) -> DocumentResponse:
+    """提取文档文本并生成可检索的 chunks。"""
+
+    try:
+        return document_processing_service.process_document(
+            db,
+            document_id,
+        )
+    except document_service.DocumentNotFoundError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error
+    except (
+        document_processing_service.DocumentProcessingError
+    ) as error:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(error),
+        ) from error
+
+
+@router.get(
+    "/{document_id}/chunks",
+    response_model=list[DocumentChunkResponse],
+)
+def list_document_chunks(
+    document_id: Annotated[int, Path(gt=0)],
+    db: Annotated[Session, Depends(get_db)],
+) -> list[DocumentChunkResponse]:
+    """按顺序返回指定文档的文本块。"""
+
+    try:
+        return (
+            document_processing_service.list_document_chunks(
+                db,
+                document_id,
+            )
         )
     except document_service.DocumentNotFoundError as error:
         raise HTTPException(

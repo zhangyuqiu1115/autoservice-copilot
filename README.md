@@ -22,8 +22,9 @@ approval.
 - SQLAlchemy 2.0 ORM
 - Alembic database migrations
 - SQLite development database
-- Vehicle, document, and service-ticket data models
+- Vehicle, document, document-chunk, and service-ticket data models
 - SQLite foreign-key enforcement
+- Cascading deletion of document chunks
 
 ### Vehicle management
 
@@ -35,7 +36,7 @@ approval.
 - Validate and normalize VIN values
 - Reject duplicate VIN values
 
-### Document ingestion foundation
+### Document ingestion and processing
 
 - Upload PDF, TXT, and Markdown documents
 - Validate file extensions and MIME types
@@ -44,11 +45,17 @@ approval.
 - Generate SHA-256 checksums
 - Reject duplicate document content
 - Store document metadata in the database
-- List uploaded documents
-- Retrieve document metadata by ID
+- Extract text from UTF-8 text files and PDF files
+- Normalize extracted text while preserving paragraph boundaries
+- Split text into configurable overlapping chunks
+- Persist ordered document chunks in the database
+- Track pending, processing, completed, and failed states
+- Safely replace existing chunks when reprocessing a document
+- List uploaded documents and retrieve their metadata
+- Process an uploaded document through the API
+- Retrieve the generated chunks through the API
 
-Document parsing, chunking, embeddings, and vector retrieval will be added in
-later stages.
+Embeddings, vector indexing, and retrieval will be added in later stages.
 
 ## Technology stack
 
@@ -59,6 +66,7 @@ later stages.
 - Alembic
 - SQLite
 - python-multipart
+- pypdf
 - Pytest
 - Ruff
 
@@ -85,6 +93,8 @@ evaluation, and deployment.
 - `POST /api/v1/documents`
 - `GET /api/v1/documents`
 - `GET /api/v1/documents/{document_id}`
+- `POST /api/v1/documents/{document_id}/process`
+- `GET /api/v1/documents/{document_id}/chunks`
 
 ## Local setup
 
@@ -93,60 +103,3 @@ Create and activate a virtual environment:
 ```powershell
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
-```
-
-Install dependencies:
-
-```powershell
-python -m pip install -r requirements.txt
-```
-
-Create the local environment file:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Apply database migrations:
-
-```powershell
-python -m alembic upgrade head
-```
-
-Run the API:
-
-```powershell
-python -m uvicorn app.main:app --reload --port 8000
-```
-
-Open:
-
-- API documentation: http://127.0.0.1:8000/docs
-- Health check: http://127.0.0.1:8000/api/v1/health
-
-## Upload configuration
-
-The default development configuration is:
-
-```env
-UPLOAD_DIRECTORY=data/uploads
-MAX_UPLOAD_SIZE_MB=10
-```
-
-Uploaded files, the local `.env` file, and the SQLite development database are
-excluded from Git.
-
-A synthetic test document is available at:
-
-```text
-sample_documents/byd_han_ev_owner_manual.txt
-```
-
-## Quality checks
-
-```powershell
-python -m ruff check .
-python -m pytest -q
-python -m alembic current
-git diff --check
-```

@@ -206,3 +206,67 @@ def test_document_upload_rejects_invalid_files(
     )
 
     assert empty_response.status_code == 400
+
+def test_document_processing_api(
+    client: TestClient,
+) -> None:
+    """测试上传、处理和查询 chunks 的完整 API 流程。"""
+
+    upload_response = client.post(
+        "/api/v1/documents",
+        data=DOCUMENT_FORM_DATA,
+        files={
+            "file": (
+                "processing-test.txt",
+                DOCUMENT_CONTENT,
+                "text/plain",
+            )
+        },
+    )
+
+    assert upload_response.status_code == 201
+
+    document_id = upload_response.json()["id"]
+
+    process_response = client.post(
+        f"/api/v1/documents/{document_id}/process",
+    )
+
+    assert process_response.status_code == 200
+
+    processed_document = process_response.json()
+
+    assert processed_document["processing_status"] == (
+        "completed"
+    )
+    assert processed_document["chunk_count"] == 1
+    assert processed_document["error_message"] is None
+
+    chunks_response = client.get(
+        f"/api/v1/documents/{document_id}/chunks",
+    )
+
+    assert chunks_response.status_code == 200
+
+    chunks = chunks_response.json()
+
+    assert len(chunks) == 1
+    assert chunks[0]["document_id"] == document_id
+    assert chunks[0]["chunk_index"] == 0
+    assert chunks[0]["content"] == (
+        DOCUMENT_CONTENT.decode("utf-8")
+    )
+    assert chunks[0]["character_count"] == len(
+        chunks[0]["content"]
+    )
+
+    missing_process_response = client.post(
+        "/api/v1/documents/999999/process",
+    )
+
+    missing_chunks_response = client.get(
+        "/api/v1/documents/999999/chunks",
+    )
+
+    assert missing_process_response.status_code == 404
+    assert missing_chunks_response.status_code == 404
