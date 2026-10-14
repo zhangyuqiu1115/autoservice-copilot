@@ -6,7 +6,12 @@ from app.core.config import get_settings
 from app.models.document import Document
 from app.models.document_chunk import DocumentChunk
 from app.models.enums import ProcessingStatus
-from app.services import document as document_service
+from app.services import (
+    document as document_service,
+)
+from app.services import (
+    vector_store as vector_store_service,
+)
 from app.services.document_parser import (
     extract_and_chunk_document,
 )
@@ -94,19 +99,28 @@ def process_document(
             )
         )
 
-        db.add_all(
-            [
-                DocumentChunk(
-                    document_id=document_id,
-                    chunk_index=chunk_index,
-                    content=chunk,
-                    character_count=len(chunk),
-                )
-                for chunk_index, chunk in enumerate(chunks)
-            ]
+        chunk_records = [
+            DocumentChunk(
+                document_id=document_id,
+                chunk_index=chunk_index,
+                content=chunk,
+                character_count=len(chunk),
+            )
+            for chunk_index, chunk in enumerate(chunks)
+        ]
+
+        db.add_all(chunk_records)
+
+        document.chunk_count = len(chunk_records)
+
+        db.commit()
+        db.refresh(document)
+
+        vector_store_service.index_document_chunks(
+            document_id,
+            chunk_records,
         )
 
-        document.chunk_count = len(chunks)
         document.processing_status = (
             ProcessingStatus.COMPLETED
         )

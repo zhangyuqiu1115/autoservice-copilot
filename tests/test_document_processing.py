@@ -14,7 +14,12 @@ from app.models.enums import (
     DocumentType,
     ProcessingStatus,
 )
-from app.services import document as document_service
+from app.services import (
+    document as document_service,
+)
+from app.services import (
+    vector_store as vector_store_service,
+)
 from app.services.document_processing import (
     DocumentProcessingError,
     list_document_chunks,
@@ -64,6 +69,11 @@ def db(
         settings,
         "document_chunk_overlap_chars",
         20,
+    )
+    monkeypatch.setattr(
+        vector_store_service,
+        "index_document_chunks",
+        lambda document_id, chunks: len(chunks),
     )
 
     session = TestingSessionLocal()

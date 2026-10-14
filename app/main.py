@@ -5,8 +5,12 @@ from fastapi import FastAPI
 
 from app.api.routes.documents import router as documents_router
 from app.api.routes.health import router as health_router
+from app.api.routes.retrieval import router as retrieval_router
 from app.api.routes.vehicles import router as vehicles_router
 from app.core.config import get_settings
+from app.services import (
+    vector_store as vector_store_service,
+)
 
 
 @asynccontextmanager
@@ -14,8 +18,12 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
     """Manage resources when the API starts and stops."""
 
     application.state.ready = True
-    yield
-    application.state.ready = False
+
+    try:
+        yield
+    finally:
+        vector_store_service.close_qdrant_client()
+        application.state.ready = False
 
 
 def create_app() -> FastAPI:
@@ -45,6 +53,11 @@ def create_app() -> FastAPI:
         prefix=settings.api_prefix,
     )
 
+    application.include_router(
+        retrieval_router,
+        prefix=settings.api_prefix,
+    )
+
     @application.get("/", tags=["root"])
     def root() -> dict[str, str]:
         return {
@@ -53,6 +66,7 @@ def create_app() -> FastAPI:
             "health": f"{settings.api_prefix}/health",
             "vehicles": f"{settings.api_prefix}/vehicles",
             "documents": f"{settings.api_prefix}/documents",
+            "retrieval": f"{settings.api_prefix}/retrieval/search",
         }
 
     return application

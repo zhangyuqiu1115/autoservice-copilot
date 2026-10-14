@@ -26,6 +26,18 @@ class Settings(BaseSettings):
         ge=0,
     )
 
+    qdrant_path: str = "data/qdrant"
+    qdrant_collection_name: str = "document_chunks"
+    embedding_model_name: str = (
+        "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    )
+    embedding_cache_directory: str = "data/models"
+    retrieval_top_k: int = Field(
+        default=5,
+        ge=1,
+        le=20,
+    )
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

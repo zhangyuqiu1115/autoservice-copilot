@@ -12,6 +12,9 @@ from app.core.config import get_settings
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
+from app.services import (
+    vector_store as vector_store_service,
+)
 
 test_engine = create_engine(
     "sqlite://",
@@ -76,6 +79,12 @@ def client(
         settings,
         "upload_directory",
         str(tmp_path / "uploads"),
+    )
+
+    monkeypatch.setattr(
+        vector_store_service,
+        "index_document_chunks",
+        lambda document_id, chunks: len(chunks),
     )
 
     with TestClient(app) as test_client:
