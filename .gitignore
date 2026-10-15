@@ -7,7 +7,7 @@ __pycache__/
 
 # Test and lint caches
 .pytest_cache/
-.pytest-tmp/
+.pytest-tmp*/
 .ruff_cache/
 
 # Local environment variables and secrets

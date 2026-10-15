@@ -34,8 +34,16 @@ AutoService Copilot 是一个面向新能源汽车售后场景的中文 RAG 与 
 - 中英文跨语言检索
 - 应用关闭时释放 Qdrant 本地资源
 
-RAG 答案生成、LangGraph Agent、售后工单审批、评估和容器化将在后续实际
-开发日完成。
+### RAG 问答
+
+- 检索、证据阈值过滤和答案生成链路
+- 默认离线 `extractive` 模式，无需 API Key
+- 可选 OpenAI-compatible Chat Completions 服务
+- 回答返回来源编号、文档 ID、文本块 ID、相似度和证据原文
+- 无可靠证据时明确拒答
+- Prompt 明确隔离检索资料中的潜在指令
+
+LangGraph Agent、售后工单审批、评估和容器化将在后续实际开发日完成。
 
 ## 技术栈
 
@@ -89,6 +97,24 @@ RAG 答案生成、LangGraph Agent、售后工单审批、评估和容器化将�
 }
 ```
 
+### RAG 问答
+
+- `POST /api/v1/rag/answer`
+
+请求示例：
+
+```json
+{
+  "query": "给车辆充电之前需要做什么？",
+  "limit": 5,
+  "document_id": 1
+}
+```
+
+响应会包含 `answer`、`grounded`、`mode` 和 `citations`。当相关文本块全部
+低于 `RAG_MIN_SCORE` 时，接口以 `no_evidence` 模式返回明确拒答，不调用
+外部生成模型。
+
 ## 本地运行
 
 创建并激活虚拟环境：
@@ -139,6 +165,20 @@ QDRANT_COLLECTION_NAME=document_chunks
 EMBEDDING_MODEL_NAME=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
 EMBEDDING_CACHE_DIRECTORY=data/models
 RETRIEVAL_TOP_K=5
+RAG_PROVIDER=extractive
+RAG_MIN_SCORE=0.35
+RAG_MAX_CONTEXT_CHARS=6000
+```
+
+默认配置无需外部模型。若要接入 Ollama、vLLM 或其他兼容 Chat Completions
+的服务，可在 `.env` 中配置：
+
+```env
+RAG_PROVIDER=openai_compatible
+LLM_BASE_URL=http://localhost:11434/v1
+LLM_API_KEY=
+LLM_MODEL=your-model-name
+LLM_TIMEOUT_SECONDS=30
 ```
 
 Embedding 模型会在首次使用时下载到 `data/models/`。Qdrant 数据保存在
