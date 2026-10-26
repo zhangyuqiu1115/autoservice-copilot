@@ -3,10 +3,12 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from app.api.routes.agent import router as agent_router
 from app.api.routes.documents import router as documents_router
 from app.api.routes.health import router as health_router
 from app.api.routes.rag import router as rag_router
 from app.api.routes.retrieval import router as retrieval_router
+from app.api.routes.service_tickets import router as service_tickets_router
 from app.api.routes.vehicles import router as vehicles_router
 from app.core.config import get_settings
 from app.services import (
@@ -74,7 +76,12 @@ def create_app() -> FastAPI:
             "documents": f"{settings.api_prefix}/documents",
             "retrieval": f"{settings.api_prefix}/retrieval/search",
             "rag": f"{settings.api_prefix}/rag/answer",
+            "agent": f"{settings.api_prefix}/agent/triage",
+            "service_tickets": f"{settings.api_prefix}/service-tickets",
         }
+
+    application.include_router(agent_router, prefix=settings.api_prefix)
+    application.include_router(service_tickets_router, prefix=settings.api_prefix)
 
     return application
 

@@ -43,7 +43,19 @@ AutoService Copilot 是一个面向新能源汽车售后场景的中文 RAG 与 
 - 无可靠证据时明确拒答
 - Prompt 明确隔离检索资料中的潜在指令
 
-LangGraph Agent、售后工单审批、评估和容器化将在后续实际开发日完成。
+### LangGraph Agent 与售后工单
+
+- LangGraph 状态图编排风险识别、RAG 检索和人工转交
+- 中英文规则优先匹配火烟、制动、转向、高压等风险描述
+- 例行问题调用已有 RAG；中高风险和未知问题转交人工
+- 知识服务不可用或证据不足时保留待处理工单
+- 原子保存待审核工单，返回执行路径、证据引用和建议
+- 支持分页查询工单、按车辆过滤和工单详情
+
+所有工单当前均为 `pending_review`，AI 建议存于 `recommended_action`，
+`final_response` 保持为空。分流采用演示规则，不构成车辆诊断或安全认证；
+规则的保守匹配及局限见 [`docs/AGENT_WORKFLOW.md`](docs/AGENT_WORKFLOW.md)。
+人工审批、评估和容器化将在后续实际开发日完成。
 
 ## 技术栈
 
@@ -55,6 +67,7 @@ LangGraph Agent、售后工单审批、评估和容器化将在后续实际开�
 - SQLite
 - Qdrant Client
 - FastEmbed
+- LangGraph
 - pypdf
 - python-multipart
 - Pytest
@@ -114,6 +127,29 @@ LangGraph Agent、售后工单审批、评估和容器化将在后续实际开�
 响应会包含 `answer`、`grounded`、`mode` 和 `citations`。当相关文本块全部
 低于 `RAG_MIN_SCORE` 时，接口以 `no_evidence` 模式返回明确拒答，不调用
 外部生成模型。
+
+
+### Agent 分流与工单
+
+- `POST /api/v1/agent/triage`：分流并为已有车辆创建待审核工单
+- `GET /api/v1/service-tickets`：分页查询，支持 `vehicle_id`、`offset`、`limit`
+- `GET /api/v1/service-tickets/{ticket_id}`：查看工单详情
+
+在 Swagger 中先创建车辆，使用返回的车辆 ID 提交：
+
+```json
+{
+  "vehicle_id": 1,
+  "query": "给车辆充电之前需要做什么？",
+  "limit": 5,
+  "document_id": 1
+}
+```
+
+`document_id` 可省略；传入时必须为已存在的文档。返回 `201` 和工单信息，
+包括 `risk_level`、`recommended_action`、`citations`、`execution_path`。
+可再用 `电池冒烟了` 验证直接转人工的路径。每次 POST 都创建新工单，
+客户端应避免重复点击或自动重试。
 
 ## 本地运行
 

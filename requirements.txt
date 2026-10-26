@@ -13,3 +13,9 @@ python-multipart>=0.0.32,<0.1
 pypdf>=6.19,<7.0
 
 qdrant-client[fastembed]>=1.19,<2.0
+
+langgraph>=1.2.16,<1.3
+# Stable Windows extensions verified with this local environment.
+xxhash==3.6.0
+mmh3==5.2.0
+py-rust-stemmers==0.1.5

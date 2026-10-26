@@ -1,10 +1,14 @@
+from __future__ import annotations
+
 from collections.abc import Sequence
 from functools import lru_cache
 from pathlib import Path
-
-from fastembed import TextEmbedding
+from typing import TYPE_CHECKING
 
 from app.core.config import get_settings
+
+if TYPE_CHECKING:
+    from fastembed import TextEmbedding
 
 
 class EmbeddingServiceError(Exception):
@@ -25,6 +29,8 @@ def get_embedding_model() -> TextEmbedding:
     )
 
     try:
+        from fastembed import TextEmbedding
+
         return TextEmbedding(
             model_name=settings.embedding_model_name,
             cache_dir=str(cache_directory),
