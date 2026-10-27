@@ -1,0 +1,27 @@
+{
+  "dataset_version": "synthetic-v1",
+  "top_k": 3,
+  "min_score": 0.35,
+  "cases": [
+    {"id": "charging-zh", "query": "给车辆充电之前需要检查什么？", "answerable": true, "expected_chunk_ids": [101, 402]},
+    {"id": "charging-en", "query": "What should I inspect before charging the vehicle?", "answerable": true, "expected_chunk_ids": [101, 402]},
+    {"id": "charging-paraphrase", "query": "充电接口要保持什么状态？", "answerable": true, "expected_chunk_ids": [101, 402]},
+    {"id": "booking-zh", "query": "预约保养要提供哪些车辆信息？", "answerable": true, "expected_chunk_ids": [102, 401]},
+    {"id": "booking-en", "query": "Which details are needed for a maintenance appointment?", "answerable": true, "expected_chunk_ids": [102, 401]},
+    {"id": "booking-paraphrase", "query": "我想约售后，先准备什么信息和时间？", "answerable": true, "expected_chunk_ids": [102, 401]},
+    {"id": "warranty-zh", "query": "提交保修咨询时需要哪些凭证？", "answerable": true, "expected_chunk_ids": [201]},
+    {"id": "warranty-en", "query": "What documents and vehicle details are needed for a warranty inquiry?", "answerable": true, "expected_chunk_ids": [201]},
+    {"id": "range-zh", "query": "为什么仪表上显示的续航里程会变化？", "answerable": true, "expected_chunk_ids": [202]},
+    {"id": "range-en", "query": "Why does the displayed driving range vary with weather and air conditioning?", "answerable": true, "expected_chunk_ids": [202]},
+    {"id": "climate-zh", "query": "空调滤芯的保养周期应该去哪里查？", "answerable": true, "expected_chunk_ids": [301]},
+    {"id": "wiper-zh", "query": "雨刷日常应该怎样维护？", "answerable": true, "expected_chunk_ids": [302]},
+    {"id": "filter-zh-to-en", "query": "充电前充电口应该处于什么状态？", "document_id": 4, "answerable": true, "expected_chunk_ids": [402]},
+    {"id": "filter-en-to-zh", "query": "What do I need to bring for warranty consultation?", "document_id": 2, "answerable": true, "expected_chunk_ids": [201]},
+    {"id": "unrelated-weather", "query": "明天北京会下雨吗？", "answerable": false, "expected_chunk_ids": []},
+    {"id": "unrelated-cooking", "query": "How long should I bake a chocolate cake?", "answerable": false, "expected_chunk_ids": []},
+    {"id": "missing-exact-warranty", "query": "这辆车保修具体是几年？", "answerable": false, "expected_chunk_ids": []},
+    {"id": "missing-exact-range", "query": "这辆车现在充满电一定能跑多少公里？", "answerable": false, "expected_chunk_ids": []},
+    {"id": "wrong-document", "query": "预约保养时需要提供哪些信息？", "document_id": 3, "answerable": false, "expected_chunk_ids": []},
+    {"id": "missing-wiper-period", "query": "雨刷具体每多少个月必须更换？", "answerable": false, "expected_chunk_ids": []}
+  ]
+}

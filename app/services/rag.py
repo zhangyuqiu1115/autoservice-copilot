@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Literal
 
 import httpx
+from qdrant_client import QdrantClient
 
 from app.core.config import Settings, get_settings
 from app.services import vector_store
@@ -188,6 +189,8 @@ def answer_question(
     *,
     limit: int | None = None,
     document_id: int | None = None,
+    client: QdrantClient | None = None,
+    settings: Settings | None = None,
 ) -> RagAnswer:
     """检索相关证据并生成带引用的回答。"""
 
@@ -196,11 +199,13 @@ def answer_question(
     if not cleaned_query:
         raise RagServiceError("Question must not be empty.")
 
-    settings = get_settings()
+    settings = settings or get_settings()
+    search_options = {"client": client} if client is not None else {}
     chunks = vector_store.search_document_chunks(
         cleaned_query,
         limit=limit,
         document_id=document_id,
+        **search_options,
     )
     evidence = _select_evidence(chunks, settings)
 

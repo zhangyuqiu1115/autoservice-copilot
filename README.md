@@ -63,7 +63,21 @@ AutoService Copilot 是一个面向新能源汽车售后场景的中文 RAG 与 
 - 工单状态与审核事件在同一事务保存，失败完整回滚
 - 审核历史保留操作人、意见、答复快照和时间；支持状态筛选
 
-完整示例见 [`docs/HUMAN_REVIEW.md`](docs/HUMAN_REVIEW.md)。评估和容器化将在后续开发日完成。
+完整示例见 [`docs/HUMAN_REVIEW.md`](docs/HUMAN_REVIEW.md)。
+
+### 可复现的基线评估
+
+- 固定合成资料：8 个文本块、20 个问答问题、20 个风险描述
+- 真实本地 Embedding 与独立内存 Qdrant，支持中英文与文档过滤评估
+- 记录检索命中、引用、拒答、风险分类与转人工指标
+- 导出含逐例结果、失败案例、配置和来源哈希的 JSON / Markdown 报告
+- `--check` 在质量门槛未达标时返回退出码 `2`
+
+2026-10-27 基线：检索 Hit@3 为 100%，引用来源完整性 100%，
+无答案问题明确拒答率 33.3%，风险分级准确率和转人工召回率均为 80%。
+**当前质量门槛未全部通过**，必须先处理拒答和风险漏分流，再做最终验收。
+运行方法、指标定义及限制见 [`docs/EVALUATION.md`](docs/EVALUATION.md)，
+实际报告见 [`reports/evaluation-2026-10-27.md`](reports/evaluation-2026-10-27.md)。
 
 ## 技术栈
 
@@ -248,6 +262,20 @@ sample_documents/byd_han_ev_owner_manual.txt
 ```
 
 ## 质量检查
+
+运行真实模型基线评估：
+
+```powershell
+python -m evaluation.run --output reports/evaluation-local.json
+```
+
+用于质量检查门槛（当前基线会返回 `2`）：
+
+```powershell
+python -m evaluation.run --check --output reports/evaluation-local.json
+```
+
+以下为功能回归检查；功能测试通过不代表评估质量门槛已达标。
 
 ```powershell
 python -m pytest -q
