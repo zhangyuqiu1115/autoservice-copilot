@@ -4,6 +4,26 @@ AutoService Copilot 是一个面向新能源汽车售后场景的中文 RAG 与 
 项目。系统从车辆手册和服务政策中提取证据，为用户问题提供可追溯的检索结果，
 并逐步扩展到风险判断、售后工单和人工审批。
 
+## 一键本地演示
+
+先按下文准备 `.venv` 并安装依赖，然后运行：
+
+```powershell
+.\start.ps1
+```
+
+启动器自动迁移数据库，使用独立的 `data/private/local-demo/` 保存演示数据，
+复用本地模型缓存；不会把演示记录写入原有业务数据库。打开 `http://127.0.0.1:8000/docs`。
+第二个终端执行真实 HTTP 验收：
+
+```powershell
+.\.venv\Scripts\python.exe -m scripts.smoke --output reports/demo-acceptance-local.json
+```
+
+支持 `./start.ps1 -Docker` 和 Compose 配置；**本机缺少 Docker Desktop/CLI 与 WSL，
+镜像构建及容器运行尚未实测**。本地一键启动、完整 HTTP 链路和重启持久化已实际验收。
+步骤及状态见 [`docs/DEMO.md`](docs/DEMO.md) 和 [`docs/DOCKER.md`](docs/DOCKER.md)。
+
 ## 当前能力
 
 ### API 与数据层
@@ -210,7 +230,7 @@ python -m pip install -r requirements.txt
 创建本地环境配置：
 
 ```powershell
-Copy-Item .env.example .env
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 ```
 
 应用数据库迁移：

@@ -1,0 +1,27 @@
+{
+  "generated_at_utc": "2026-10-27T15:37:17.793704+00:00",
+  "transport": "real HTTP loopback",
+  "data": "synthetic demo only",
+  "run_id": "99d2bb7817e64493b2bc047df542b293",
+  "passed": true,
+  "checks": [
+    "health_demo_environment",
+    "vehicle_created",
+    "upload_parse_chunk_index",
+    "retrieval_filtered",
+    "rag_with_citations",
+    "unsupported_fact_refused",
+    "agent_grounded_ticket",
+    "critical_human_handoff",
+    "review_auth_required",
+    "explicit_synthetic_approval",
+    "stale_version_rejected",
+    "ticket_closed",
+    "audit_history"
+  ],
+  "duration_seconds": 10.347,
+  "vehicle_id": 1,
+  "document_id": 1,
+  "closed_ticket_id": 1,
+  "pending_critical_ticket_id": 2
+}

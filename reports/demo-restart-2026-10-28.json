@@ -1,0 +1,15 @@
+{
+  "generated_at_utc": "2026-10-27T16:14:41.011006+00:00",
+  "transport": "real HTTP loopback",
+  "data": "synthetic demo only",
+  "passed": true,
+  "checks": [
+    "vehicle_persisted",
+    "document_persisted",
+    "closed_ticket_persisted",
+    "audit_history_persisted",
+    "critical_ticket_persisted",
+    "vector_index_persisted"
+  ],
+  "original_run_id": "99d2bb7817e64493b2bc047df542b293"
+}

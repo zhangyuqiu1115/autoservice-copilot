@@ -1,0 +1,39 @@
+name: autoservice-copilot
+
+services:
+  api:
+    build: .
+    ports:
+      - "127.0.0.1:${APP_PORT:-8000}:8000"
+    environment:
+      ENVIRONMENT: demo
+      DEBUG: "false"
+      API_PREFIX: /api/v1
+      DATABASE_URL: sqlite:////app/data/autoservice.db
+      UPLOAD_DIRECTORY: /app/data/uploads
+      QDRANT_PATH: /app/data/qdrant
+      EMBEDDING_CACHE_DIRECTORY: /app/data/models
+      REVIEW_API_KEY: "${REVIEW_API_KEY:?Set a private REVIEW_API_KEY in .env}"
+      RAG_PROVIDER: extractive
+    volumes:
+      - app-data:/app/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    init: true
+    stop_grace_period: 30s
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=3).close()"
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 6
+
+volumes:
+  app-data:
