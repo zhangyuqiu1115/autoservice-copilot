@@ -13,6 +13,7 @@ __pycache__/
 # Local evaluation reruns; dated public synthetic baselines are tracked separately.
 reports/evaluation-local.*
 reports/evaluation-latest.*
+reports/validation-local.*
 
 # Local environment variables and secrets
 .env

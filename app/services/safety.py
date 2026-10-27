@@ -19,7 +19,8 @@ RULES: tuple[tuple[RiskLevel, str, str], ...] = (
     (
         RiskLevel.CRITICAL,
         "fire_or_smoke",
-        r"冒烟|浓烟|起火|着火|自燃|火焰|爆炸|热失控|\b(smoke|smoking|fire|flames?|explosion)\b",
+        r"冒烟|浓烟|白烟|黑烟|烟雾|起火|着火|自燃|火焰|爆炸|热失控|"
+        r"\b(smoke|smoking|fire|flames?|explosion|smouldering|smoldering)\b",
     ),
     (
         RiskLevel.HIGH,
@@ -33,11 +34,24 @@ RULES: tuple[tuple[RiskLevel, str, str], ...] = (
         r"\b(high[ -]?voltage|electric shock|collision|crash|swollen battery)\b",
     ),
     (
+        RiskLevel.HIGH,
+        "burning_smell_or_tire_pressure_loss",
+        r"烧焦|焦糊|焦味|爆胎|(?:轮胎|车胎).{0,8}(?:漏气|没气|瘪|破裂)|"
+        r"胎压.{0,6}(?:下降|降低|不足|偏低|过低|报警)|"
+        r"\b(?:burning|burnt|scorched)\s+(?:smell|odou?r)|"
+        r"\bsmell\w*.{0,24}(?:burning|burnt|scorched)|"
+        r"\b(?:tyre|tire).{0,24}(?:flat|deflat|punctur|leak|losing air|air loss|blowout)|"
+        r"\b(?:flat|deflat\w*|punctur\w*).{0,16}(?:tyre|tire)\b|"
+        r"\blow\s+(?:tyre|tire)\s+pressure\b",
+    ),
+    (
         RiskLevel.MEDIUM,
         "charging_or_fault",
-        r"无法充电|充不进|充电失败|异响|异味|过热|故障|无法启动|损坏|报警|异常|失灵|失效|"
+        r"无法充电|充不进|充电失败|异响|异味|过热|烫手|发热|高温|"
+        r"故障|无法启动|损坏|报警|异常|失灵|失效|"
         r"\b(overheat\w*|warning light|charging fail\w*|cannot charge|won't start|"
-        r"fault\w*|broken|damag\w*)\b",
+        r"fault\w*|broken|damag\w*|(?:very|extremely|too|unusually)\s+hot|"
+        r"heating\s+up|hot\s+to\s+(?:touch|handle))\b",
     ),
     (
         RiskLevel.LOW,
@@ -51,6 +65,7 @@ RULES: tuple[tuple[RiskLevel, str, str], ...] = (
 def assess_risk(question: str) -> RiskAssessment:
     """优先匹配高风险词，未命中已知例行场景则保持 unknown。"""
 
+    question = " ".join(question.split())
     for level, category, pattern in RULES:
         if re.search(pattern, question, flags=re.IGNORECASE):
             return RiskAssessment(

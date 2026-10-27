@@ -127,7 +127,7 @@ def test_answer_question_limits_context_length(
                 chunk_id=30,
                 document_id=5,
                 chunk_index=0,
-                content="A" * 700,
+                content="充电前请确认充电口干燥。" + "A" * 700,
                 score=0.9,
             )
         ],
@@ -138,7 +138,7 @@ def test_answer_question_limits_context_length(
         lambda: make_settings(rag_max_context_chars=500),
     )
 
-    result = rag_service.answer_question("测试上下文限制")
+    result = rag_service.answer_question("充电前应该检查什么？")
 
     assert len(result.citations[0].excerpt) == 500
     assert "A" * 501 not in result.answer
@@ -237,7 +237,7 @@ def test_answer_question_handles_provider_failure(
                 chunk_id=50,
                 document_id=7,
                 chunk_index=0,
-                content="有效证据",
+                content="充电前请确认充电口干燥。",
                 score=0.9,
             )
         ],
@@ -261,7 +261,7 @@ def test_answer_question_handles_provider_failure(
         rag_service.RagServiceError,
         match="Could not generate",
     ):
-        rag_service.answer_question("测试失败响应")
+        rag_service.answer_question("充电前应该检查什么？")
 
 
 def test_answer_question_rejects_blank_query() -> None:

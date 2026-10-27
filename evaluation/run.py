@@ -249,7 +249,7 @@ def evaluate(dataset_directory: Path = DATASET) -> dict[str, Any]:
     ] + [
         ROOT / name for name in (
             "app/services/rag.py", "app/services/vector_store.py", "app/services/safety.py",
-            "app/services/embedding.py", "evaluation/run.py",
+            "app/services/embedding.py", "app/services/evidence_gate.py", "evaluation/run.py",
         )
     ]
     hashes = {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in source_paths}
@@ -312,7 +312,7 @@ def render_markdown(report: dict[str, Any]) -> str:
         "", "## 解释边界", "",
         "这是固定的小型合成测试集，包含边界与挑战案例，不是独立真实客户测试集。",
         "引用完整性只验证来源 ID 与片段匹配，不能证明每个结论正确。",
-        "grounded 是分数阈值标记，不证明证据足以回答问题；拒答按 no_evidence 模式严格统计。",
+        "grounded 由相似度及启发式证据检查决定，不保证事实蕴含；拒答按 no_evidence 模式统计。",
         "风险路由依据实际规则分类结果是否为 low 计算，与 Agent 条件边保持一致。",
         "不调用付费 LLM、不写业务数据库；只用真实本地 Embedding 和内存 Qdrant。",
         "耗时是模型预热后的 RAG 服务调用耗时，不含建索引、额外排名测量或 HTTP 开销。", "",

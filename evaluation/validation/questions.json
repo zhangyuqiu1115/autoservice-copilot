@@ -1,0 +1,27 @@
+{
+  "dataset_version": "synthetic-validation-v1",
+  "top_k": 3,
+  "min_score": 0.35,
+  "cases": [
+    {"id": "connector-preparation", "query": "接上充电枪前，充电口要怎样？", "answerable": true, "expected_chunk_ids": [1101]},
+    {"id": "connector-en", "query": "How should I check the charge port before plugging in?", "answerable": true, "expected_chunk_ids": [1101]},
+    {"id": "service-information", "query": "约个售后保养，需要带哪些资料？", "answerable": true, "expected_chunk_ids": [1102]},
+    {"id": "service-en", "query": "What should I provide to book a maintenance visit?", "answerable": true, "expected_chunk_ids": [1102]},
+    {"id": "warranty-years", "query": "演示合同的保修期为几年？", "answerable": true, "expected_chunk_ids": [1201]},
+    {"id": "warranty-years-en", "query": "How many years does the synthetic warranty last?", "answerable": true, "expected_chunk_ids": [1201]},
+    {"id": "warranty-documents", "query": "办理演示保修要准备什么材料？", "answerable": true, "expected_chunk_ids": [1201]},
+    {"id": "range-factors", "query": "空调和天气为什么会影响预计续航？", "answerable": true, "expected_chunk_ids": [1202]},
+    {"id": "rated-range", "query": "演示车辆的标称续航是多少公里？", "answerable": true, "expected_chunk_ids": [1202]},
+    {"id": "filter-period", "query": "合成规定中空调滤芯多久检查一次？", "answerable": true, "expected_chunk_ids": [1301]},
+    {"id": "filter-manual", "query": "空调滤芯具体维护说明到哪里查？", "answerable": true, "expected_chunk_ids": [1301]},
+    {"id": "wiper-care", "query": "想做雨刷日常维护，有哪些建议？", "answerable": true, "expected_chunk_ids": [1302]},
+    {"id": "pressure-value", "query": "合成试验中建议胎压是多少 kPa？", "answerable": true, "expected_chunk_ids": [1401]},
+    {"id": "wiper-missing-number", "query": "演示雨刷应该每隔几个月换新？", "answerable": false, "expected_chunk_ids": []},
+    {"id": "live-range", "query": "我的车现在实际还可以跑多少公里？", "answerable": false, "expected_chunk_ids": []},
+    {"id": "booking-wrong-source", "query": "预约保养要带什么资料？", "document_id": 13, "answerable": false, "expected_chunk_ids": []},
+    {"id": "warranty-wrong-source", "query": "保修几年？", "document_id": 11, "answerable": false, "expected_chunk_ids": []},
+    {"id": "missing-fee", "query": "预约一次保养要多少钱？", "answerable": false, "expected_chunk_ids": []},
+    {"id": "unrelated-history", "query": "Who was the first emperor of Rome?", "answerable": false, "expected_chunk_ids": []},
+    {"id": "unrelated-recipe", "query": "怎么制作一份草莓蛋糕？", "answerable": false, "expected_chunk_ids": []}
+  ]
+}

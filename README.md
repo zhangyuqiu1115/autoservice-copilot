@@ -75,9 +75,16 @@ AutoService Copilot 是一个面向新能源汽车售后场景的中文 RAG 与 
 
 2026-10-27 基线：检索 Hit@3 为 100%，引用来源完整性 100%，
 无答案问题明确拒答率 33.3%，风险分级准确率和转人工召回率均为 80%。
-**当前质量门槛未全部通过**，必须先处理拒答和风险漏分流，再做最终验收。
+初版失败基线保留用于对比。随后增加主题、必要数量事实、预约材料覆盖检查，以及更多症状规则。
+修复后原集明确拒答率和转人工召回率均为 100%，风险分级准确率为 95%。
+新增资料集检索命中 12/13，7 个无答案问题全部拒答，风险分级准确率为 95%。
+**两个开发合成集均通过预定质量门槛**；仍有否定句误报与一例检索未命中，不能代表真实业务准确率。
 运行方法、指标定义及限制见 [`docs/EVALUATION.md`](docs/EVALUATION.md)，
 实际报告见 [`reports/evaluation-2026-10-27.md`](reports/evaluation-2026-10-27.md)。
+
+修复说明和对比见 [`docs/QUALITY_GUARDS.md`](docs/QUALITY_GUARDS.md)，
+[修复后原集报告](reports/evaluation-2026-10-27-after-fixes.md)和
+[新增问题集报告](reports/evaluation-2026-10-27-validation.md)。
 
 ## 技术栈
 
@@ -269,10 +276,16 @@ sample_documents/byd_han_ev_owner_manual.txt
 python -m evaluation.run --output reports/evaluation-local.json
 ```
 
-用于质量检查门槛（当前基线会返回 `2`）：
+用于质量检查门槛（当前版本原集通过返回 `0`；未达标返回 `2`）：
 
 ```powershell
 python -m evaluation.run --check --output reports/evaluation-local.json
+```
+
+新增资料与问题集：
+
+```powershell
+python -m evaluation.run --check --dataset evaluation/validation --output reports/validation-local.json
 ```
 
 以下为功能回归检查；功能测试通过不代表评估质量门槛已达标。

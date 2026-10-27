@@ -1,0 +1,13 @@
+{
+  "dataset_version": "synthetic-validation-v1",
+  "description": "New synthetic passages with explicit numeric answers and deliberately missing facts. All numeric values are fictional demonstration values.",
+  "chunks": [
+    {"chunk_id": 1101, "document_id": 11, "chunk_index": 0, "content": "Synthetic charging checklist: ensure the vehicle is parked safely. Check that the charge port is dry and the charging connector has no visible damage. These are fictional demonstration notes, not an official manual."},
+    {"chunk_id": 1102, "document_id": 11, "chunk_index": 1, "content": "Synthetic maintenance booking: provide the VIN, registration certificate and your preferred visit time. Staff must confirm an appointment. No fixed appointment time or fee is specified."},
+    {"chunk_id": 1201, "document_id": 12, "chunk_index": 0, "content": "合成演示合同：演示保修期限为4年，里程上限为90000公里。申请保修时准备购车票据、车辆 VIN 和里程记录。这些数值纯属虚构，不适用于任何真实车辆。"},
+    {"chunk_id": 1202, "document_id": 12, "chunk_index": 1, "content": "合成演示参数：演示车辆的标称续航为300公里。预计续航会随环境温度和空调使用变化。本文未提供某辆车现在的实际剩余续航，不能据此承诺实际道路行驶距离。"},
+    {"chunk_id": 1301, "document_id": 13, "chunk_index": 0, "content": "合成演示维护规定：空调滤芯每6个月检查一次。具体维护说明可查阅演示维护手册。6个月是虚构演示周期，不代表任何厂商要求。"},
+    {"chunk_id": 1302, "document_id": 13, "chunk_index": 1, "content": "合成雨刷维护资料：保持前挡风玻璃干净，检查雨刷胶条外观。资料没有规定雨刷更换月份，也没有说明预约保养需要提供什么信息。"},
+    {"chunk_id": 1401, "document_id": 14, "chunk_index": 0, "content": "合成试验记录：演示轮胎的建议胎压为240 kPa。此数值纯属虚构，只用于软件测试，不适用于真实车辆。实际胎压要求应查对应车辆标牌。"}
+  ]
+}

@@ -6,6 +6,7 @@ from qdrant_client import QdrantClient
 
 from app.core.config import Settings, get_settings
 from app.services import vector_store
+from app.services.evidence_gate import filter_supporting_evidence
 from app.services.vector_store import RetrievedChunk
 
 NO_EVIDENCE_ANSWER = (
@@ -207,7 +208,9 @@ def answer_question(
         document_id=document_id,
         **search_options,
     )
-    evidence = _select_evidence(chunks, settings)
+    evidence = _select_evidence(filter_supporting_evidence(cleaned_query, chunks), settings)
+    # Recheck after truncation so a discarded fact cannot justify the visible excerpt.
+    evidence = filter_supporting_evidence(cleaned_query, evidence)
 
     if not evidence:
         return RagAnswer(
