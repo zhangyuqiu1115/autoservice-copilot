@@ -52,10 +52,18 @@ AutoService Copilot 是一个面向新能源汽车售后场景的中文 RAG 与 
 - 原子保存待审核工单，返回执行路径、证据引用和建议
 - 支持分页查询工单、按车辆过滤和工单详情
 
-所有工单当前均为 `pending_review`，AI 建议存于 `recommended_action`，
-`final_response` 保持为空。分流采用演示规则，不构成车辆诊断或安全认证；
+新工单均为 `pending_review`，AI 建议存于 `recommended_action`。
+审核人员明确批准后才写入 `final_response`。分流采用演示规则，不构成车辆诊断或安全认证；
 规则的保守匹配及局限见 [`docs/AGENT_WORKFLOW.md`](docs/AGENT_WORKFLOW.md)。
-人工审批、评估和容器化将在后续实际开发日完成。
+### 人工审核与工单流转
+
+- 独立审核密钥保护审批、退回、重新送审、关闭及审核历史接口
+- 审核人员显式填写最终答复；退回必须填写原因
+- 按工单版本检查更新，重复和过期操作返回 `409`
+- 工单状态与审核事件在同一事务保存，失败完整回滚
+- 审核历史保留操作人、意见、答复快照和时间；支持状态筛选
+
+完整示例见 [`docs/HUMAN_REVIEW.md`](docs/HUMAN_REVIEW.md)。评估和容器化将在后续开发日完成。
 
 ## 技术栈
 
@@ -150,6 +158,18 @@ AutoService Copilot 是一个面向新能源汽车售后场景的中文 RAG 与 
 包括 `risk_level`、`recommended_action`、`citations`、`execution_path`。
 可再用 `电池冒烟了` 验证直接转人工的路径。每次 POST 都创建新工单，
 客户端应避免重复点击或自动重试。
+
+### 人工审核接口
+
+- `POST /api/v1/service-tickets/{ticket_id}/review`：批准或退回
+- `POST /api/v1/service-tickets/{ticket_id}/submit-for-review`：草稿重新送审
+- `POST /api/v1/service-tickets/{ticket_id}/close`：关闭已批准工单
+- `GET /api/v1/service-tickets/{ticket_id}/events`：分页读取审核历史
+
+以上接口需要 `X-Review-Key`。在 `.env` 设置私有 `REVIEW_API_KEY`，重启 API，
+在 Swagger 的 **Authorize** 中填入密钥。未配置时接口返回 `503`，无效密钥返回 `403`。
+列表接口支持 `status=pending_review` 等筛选。工单详情中的 `version` 用于请求的
+`expected_version` 字段。
 
 ## 本地运行
 

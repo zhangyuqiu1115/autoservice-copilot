@@ -40,15 +40,16 @@ flowchart TD
 - 例行问题沿用 RAG 的证据阈值、来源引用及无证据拒答。
 - RAG/向量服务的已知异常返回人工处理提示，并创建待审核工单。
 - 未知编程异常正常抛出，图执行失败时不会提前保存半成品工单。
-- 所有工单保持 `pending_review`、`requires_human_review=true`。
+- Agent 创建的工单为 `pending_review`、`requires_human_review=true`。
 - `recommended_action` 保存 AI 建议或人工转交提示。
-- `final_response`、`approved_at`、`closed_at` 保持为空；审批在后续阶段实现。
+- 新建时 `final_response`、`approved_at`、`closed_at` 均为空；人工审批与关闭规则见
+  [`HUMAN_REVIEW.md`](HUMAN_REVIEW.md)，该流程已于 2026-10-27 接通。
 - 证据列表和执行路径在分流响应中返回，来源 ID 和图路径摘要保存到 `ai_summary`。
 - 工单提交失败会回滚事务，API 返回 `503`；关联实体不存在返回 `404`。
 - 每次 POST 新建工单，目前没有幂等键，客户端不要自动重试写请求。
 
-本地 API 尚未实现鉴权，限本地开发演示使用。人工审核在本阶段是工单状态，
-并非已实现人员通知或实际派单。
+Agent 和普通读取接口限本地开发演示使用。审核接口使用独立密钥保护，
+尚未接入生产账号与角色系统，也未实现人员通知或实际派单。
 
 ## 本地验收
 
